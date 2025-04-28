@@ -1,8 +1,15 @@
 # BAE305_FlowerPower
-Flower Power project is an automated watering and lighting system for plants on staycation. 
-https://jillyfortwengler.github.io/BAE305_FlowerPower/
+Brynn, Lauren, and Jilly's Online Design File
+# Online Design file for BAE305 Spring 2024
+* By: Brynn Cooper, Lauren Kargas, and Jilian Fortwengler
+* Date Submitted: 4/30/2025
+
 # Summary
 (Between 125 and 500 words the desribes the project and results)
+
+Flower Power project is an automated watering and lighting system for plants on staycation. 
+https://jillyfortwengler.github.io/BAE305_FlowerPower/
+
 # Design Description
 (Engineering drawings, code, and assembly instructions are complete and correct)
 # Testing Description
