@@ -16,6 +16,7 @@ We began by outlining the materials needed for the project. Key components were 
 - Circuit components: RTC (Real-Time Clock) module and two relays
 
 ![image](https://github.com/user-attachments/assets/41541d39-87c2-4b2c-950a-eb7c08c0e04e)
+
 **_Figure 1: Bill of Materials_**
 
 
@@ -26,6 +27,7 @@ We began by outlining the materials needed for the project. Key components were 
 The motor is connected to a relay, which switches it on and off based on soil moisture readings. A SparkFun Soil Moisture Sensor detects when watering is needed. A piezo buzzer sounds during watering to alert the user.
 
 ![image](https://github.com/user-attachments/assets/1b75d73b-1a72-480d-930b-cf0495b2d304)
+
 **_Figure 2: Motor and Soil Sensor Circuit Design_**
 
 
@@ -34,6 +36,7 @@ The motor is connected to a relay, which switches it on and off based on soil mo
 An ultrasonic sensor detects the water level in the reservoir. If the water level drops too low, an LED light illuminates to signal a refill is needed.
 
 ![image](https://github.com/user-attachments/assets/13b4dcab-2bd2-4770-8004-b3d2e1141c25)
+
 **_Figure 3: Ultrasonic Sensor Circuit Design_**
 
 **LCD Display Integration:**
@@ -41,6 +44,7 @@ An ultrasonic sensor detects the water level in the reservoir. If the water leve
 An LCD screen displays the real-time clock and soil moisture percentage.
 
 ![image](https://github.com/user-attachments/assets/41dd840b-e424-466f-9f6b-9a21830703e1)
+
 **_Figure 4: LCD Screen Circuit Design_4**
 
 
@@ -58,6 +62,7 @@ The light bulb is connected to a relay module to control when the light is on an
 To connect the soil moisture readings to the LCD, the signal must be converted from analog to digital across the Arduinos. This is done by filtering the signal through a capacitor and resistor to clean the PWM signal. 
 
 ![image](https://github.com/user-attachments/assets/4e8bf86e-3239-4440-9d50-e741bc168066)
+
 **_Figure 6: Multi-Arduino Integration Circuit Design_**
 
 ### Part 3: Code
