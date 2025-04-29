@@ -47,7 +47,7 @@ An LCD screen displays the real-time clock and soil moisture percentage.
 
 ![image](https://github.com/user-attachments/assets/41dd840b-e424-466f-9f6b-9a21830703e1)
 
-**_Figure 4: LCD Screen Circuit Design_4**
+**_Figure 4: LCD Screen Circuit Design_**
 
 
 ### Part 2: Automated Lighting System
@@ -57,7 +57,7 @@ The light bulb is connected to a relay module to control when the light is on an
 
 ![image](https://github.com/user-attachments/assets/67652321-0dcf-4e61-8ada-a5317d8eecd0)
 
-**_Figure 5: Light Bulb and RTC Circuit Design_ **
+**_Figure 5: Light Bulb and RTC Circuit Design_**
 
 
 **Soil Moisture Signal**
@@ -347,10 +347,10 @@ This plant system was designed for the audience of plant enthusiasts who struggl
 
 The limitations of this system are as follows. The current version requires manual reservoir refilling (no auto-refill system). Furthermore, this system is designed for a single medium plant or 2-3 small plants. Finally, the plant automation system requires a wall plug for the light system to work properly.
 
-## Testing Results
+# Testing Results
 
 All of the following components were tested both individually and with the integrated system to ensure full operational capability.
-##1. Soil moisture sensing and pump activation
+### 1. Soil moisture sensing and pump activation
 The SparkFun Soil Moisture Sensor accurately detected soil dryness and triggered the water pump through a relay when readings fell below the calibrated moisture threshold. The system consistently avoided overwatering, and pump activation was confirmed with both water flow and buzzer alerts during each test cycle. To test the pump system, we used the following code to turn the system on and off to test its performance:
 ```c++
 const int pumpPin = 13;  // Pin connected to relay module controlling the pump
@@ -386,7 +386,9 @@ if ((hour >= lightOnHour) && (hour < lightOffHour)) {
     Serial.println("Light OFF");
   }
 ```
-##2. Water Reservoir Monitoring and LED Alert
+
+### 2. Water Reservoir Monitoring and LED Alert
+
 The ultrasonic sensor accurately measured water depth and illuminated the LED alert light when water levels dropped below the 2 cm threshold. This test ensured users receive timely visual notifications to refill the reservoir and avoid pump damage or plant dehydration. We used the following code to test the motor by turning it on and off:
 ```c++
 const int pumpRelayPin = 12; // Digital pin connected to relay IN
@@ -424,7 +426,9 @@ void loop() {
   delay(1000);                // OFF for 1 second
 }
 ```
-##3. Real-Time Clock (RTC) Functionality and Light Scheduling
+
+### 3. Real-Time Clock (RTC) Functionality and Light Scheduling
+
 The RTC module was tested to verify accurate timekeeping and light control. Grow light activation and deactivation reliably followed the programmed schedule (8 am – 8 pm) with multiple successful cycles confirming stable relay switching based on RTC time. We ran into some issues getting the RTC to connect with the light system but switched the light circuit to be on the same breadboard as the RTC and then it worked perfectly. The code we used to test the RTC individually is as follows:
 ```c++
 #include <Wire.h>
@@ -466,7 +470,7 @@ void loop() {
   delay(1000);
 }
 ```
-##4. LCD Display Output
+### 4. LCD Display Output
 The LCD screen displayed live data from the sensors, including soil moisture values and the time of the day through the RTC. It updated correctly in response to sensor changes, confirming proper communication between the Arduino and display module. The code we used to test the LCD individually is as follows:
 ```c++
 #include <LiquidCrystal.h>
