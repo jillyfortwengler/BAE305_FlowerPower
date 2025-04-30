@@ -1,5 +1,5 @@
 # Flower Power Plant Staycation
-
+theme: jekyll-theme-leap-day
 Group Members: Brynn Cooper, Jillian Fortwengler, Lauren Kargas
 
 ## Summary
