@@ -172,104 +172,166 @@ This code includes the Light Bulb, the Real-Time Module, and the LCD Screen. Wit
 
 ```c++ 
 
-#include <Wire.h> 
-#include "RTClib.h" 
+#include <Wire.h>
+#include "RTClib.h"
 #include <LiquidCrystal.h>
 
-// --- RTC + LCD Setup --- 
-
-RTC_PCF8523 rtc; 
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);  // RS, EN, D4, D5, D6, D7 
-
-// --- Pins --- 
-
-const int soilInputPin = A1; 
-const int relayPin = 7;  // Relay controlling grow light 
-
-// --- Light Schedule (24hr format) --- 
-
-const int lightOnHour = 8; 
-const int lightOffHour = 20; 
+// --- RTC + LCD Setup ---
+RTC_PCF8523 rtc;
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);  // RS, EN, D4, D5, D6, D7
 
 
-void setup() { 
-  Serial.begin(9600); 
-  Wire.begin(); 
+// --- Pins ---
+const int soilInputPin = A1;
+const int relayPin = 7;  // Relay controlling grow light
+const int pumpPin = 10; // relay pin for pump
 
-  // LCD 
+const int dryThreshold = 450  ; // dry threshold for watering 
 
-  lcd.begin(16, 2); 
-  lcd.print("Starting..."); 
-  delay(1000); 
-  lcd.clear(); 
+const int timedelpump = 8000;
+unsigned long timeRun = 0;
 
-  // Relay 
 
-  pinMode(relayPin, OUTPUT); 
-  digitalWrite(relayPin, LOW);  // Light OFF at start 
+// --- Light Schedule (24hr format) ---
+const int lightOnHour = 8;
+const int lightOffHour = 20;
+const unsigned long wateringTime = 2000; //Pump on Time (ms)
 
-  // RTC 
+String Command;           //the direction that the robot will drive in (this change which direction the two motors spin in)
 
-  if (!rtc.begin()) { 
+bool manual = false;
 
-    lcd.print("RTC not found!"); 
-    Serial.println("RTC not found!"); 
-    while (1); 
+void setup() {
+  Serial.begin(9600);
+  Wire.begin();
+  pinMode(pumpPin, OUTPUT);
 
-  } 
+  // LCD
+  lcd.begin(16, 2);
+  lcd.print("Starting...");
+  delay(1000);
+  lcd.clear();
 
-  // Set time once (optional, then comment out) 
-  // rtc.adjust(DateTime(2025, 4, 21, 15, 45, 0)); 
+  // pump
+  digitalWrite(pumpPin, LOW); // ensure pump is off
 
-} 
+  // Relay
+  pinMode(relayPin, OUTPUT);
+  digitalWrite(relayPin, LOW);  // Light OFF at start
 
-void loop() { 
+  // RTC
+  if (!rtc.begin()) {
+    lcd.print("RTC not found!");
+    Serial.println("RTC not found!");
+    while (1);
+  }
+  timeRun = millis();
+  // Set time once (optional, then comment out)
+  // rtc.adjust(DateTime(2025, 4, 21, 15, 45, 0));
+}
 
-  DateTime now = rtc.now(); 
-  int hour = now.hour(); 
-  int minute = now.minute(); 
+void loop() {
+  DateTime now = rtc.now();
+  int hour = now.hour();
+  int minute = now.minute();
+                                                    //if the switch is in the ON position
+    if (Serial.available() > 0)                         //if the user has sent a command to the RedBoard
+    {
+      Command = Serial.readStringUntil(' ');       //read the characters in the command until you reach the first space
 
-  // --- Light Control (Relay) --- 
+      //print the command that was just received in the serial monitor
+      Serial.println(Command);
+      
 
-  if ((hour >= lightOnHour) && (hour < lightOffHour)) { 
+      if (Command == "TPON")                         // pump on
+      {
+        digitalWrite(pumpPin, HIGH);
+        delay(wateringTime);
+        digitalWrite(pumpPin, LOW);
+      }
+      
+      else if (Command == "TLON")                     // light on
+      {
+        digitalWrite(relayPin, HIGH);
+      }
+      else if (Command == "TLOF")                   // light off
+      {
+        digitalWrite(relayPin, LOW);
+      }
+      else if (Command == "TLMA")                   // light off
+      {
+        if (manual == true)
+        { 
+          manual = false;
+          Serial.println("Turned Auto");
+        }
+        else 
+       { 
+          manual = true;
+          Serial.println("Turned Manual");
+        }
+      }
+    }
 
+
+  // --- Light Control (Relay) ---
+  if ((!manual) && (hour >= lightOnHour) && (hour < lightOffHour))
+  {
     digitalWrite(relayPin, HIGH);  // Light ON
-    Serial.println(hour); 
-    Serial.println("Light ON");}  
+    Serial.println(hour);
+    Serial.println("💡 Light ON");} 
+  else if ((!manual) && (hour <= lightOnHour) && (hour > lightOffHour))
+  {
+    digitalWrite(relayPin, LOW);   // Light OFF
+    Serial.println("🌙 Light OFF");
+  }
 
-    else { 
-    digitalWrite(relayPin, LOW);   // Light OFF 
-    Serial.println("Light OFF"); 
+  // --- Soil Moisture ---
+  int analogValue = analogRead(soilInputPin);  // 0-1023
+  int moisturePercent = map(analogValue, 0, 1023, 0, 100);  // Calibrated
 
-  } 
+  Serial.println(analogValue);
+  Serial.println(moisturePercent);
 
-  // --- Soil Moisture --- 
+   // --- Trigger buzzer and pump if dry AND water available ---
+    if (analogValue <= dryThreshold) 
+    {
+    
+      if ((millis() - timeRun) > timedelpump)
+      { 
+      Serial.print("Now watering ");
+      Serial.print(millis());
+      Serial.print(" ");
+      Serial.print(timeRun);
+      digitalWrite(pumpPin, HIGH);
+      delay(wateringTime);
+      digitalWrite(pumpPin, LOW);
+      Serial.println("Pump OFF");
+      timeRun = millis();
+      }
+    } else {
+      Serial.println("No watering needed.");
+    }
 
-  int analogValue = analogRead(soilInputPin);  // 0-1023 
-  int moisturePercent = map(analogValue, 50, 1023, 0, 100);  // Calibrated 
+  // --- LCD Display ---
+  lcd.setCursor(0, 0);
+  lcd.print("Time: ");
+  if (hour < 10) lcd.print("0");
+  lcd.print(hour);
+  lcd.print(":");
+  if (minute < 10) lcd.print("0");
+  lcd.print(minute);
+  lcd.print("   ");
 
-  Serial.println(analogValue); 
-
-  // --- LCD Display --- 
-
-  lcd.setCursor(0, 0); 
-  lcd.print("Time: "); 
-  if (hour < 10) lcd.print("0"); 
-  lcd.print(hour); 
-  lcd.print(":"); 
-  if (minute < 10) lcd.print("0"); 
-  lcd.print(minute); 
-  lcd.print("   "); 
-
-  lcd.setCursor(0, 1); 
-  lcd.print("Soil: "); 
-  lcd.print(moisturePercent); 
-  lcd.print("%     "); 
-
-  delay(1000);  // Update every second 
-} 
+  lcd.setCursor(0, 1);
+  lcd.print("Soil: ");
+  lcd.print(moisturePercent);
+  lcd.print("%     ");
 
  
+
+  delay(1000);  // Update every second
+}
 
 ``` 
 
