@@ -12,13 +12,14 @@ The Flower Power Plant Staycation was thoughtfully designed with busy college st
 
 ## Materials and Planning
 
-1. First, we created a Bill of Materials (BoM) needed for this project. We selected the best components based on their performance and capability for the needs of the project. 
-•	A UV Grow Light to promote optimal plant growth
-•	SparkFun Soil Sensor
-•	A LED bulb extension cord with a switch
-•	A reliable water pump motor capable of extended use
-•	A tube for the water pump
-•	Circuit components: Real-Time Clock (RTC), two relays, LCD screen, 
+1. First, we created a Bill of Materials (BoM) needed for this project. We selected the best components based on their performance and capability for the needs of the project.
+   
+*	A UV Grow Light to promote optimal plant growth
+*	SparkFun Soil Sensor
+*	A LED bulb extension cord with a switch
+*	A reliable water pump motor capable of extended use
+*	A tube for the water pump
+*	Circuit components: Real-Time Clock (RTC), two relays, LCD screen, 
 
 ![image](https://github.com/user-attachments/assets/41541d39-87c2-4b2c-950a-eb7c08c0e04e)
 
@@ -327,33 +328,55 @@ void loop() {
 
 ``` 
 
-## Part 4 – The Box 
+## *Part 4 – The Housing*
 
-## Part 5 - The App
-#1.
+As this project is comprised of many different working parts, a wooden box was constructed to house the components separately and safely. It consisted of three main compartments: one large middle compartment and two smaller ones on the top and bottom. The upper compartment is intended to house the grow light and associated Arduinos, whereas the lower compartment contains the reservoir, refill light, and pump, and all other associated Arduinos. The larger middle compartment is intended to house the plants safely while preventing any soil from getting into the other components. 
 
-App flowchart
+This design also promotes the implementation of the product in its target audience: busy college students. With one simple housing that contains all components, consumers needn’t worry about having difficulty moving things around – just empty the reservoir and it’s ready to move!
 
+To ensure replicative design via future engineers, SOLIDWORKS 2024 was used to model the housing and create clear and concise engineering drawings before physically building the model. The panels were modeled individually, then laser cut before being superglued together. Support brackets were also created and fastened to the bottom corners of the housing to ensure stability while bearing weight. One drawing for the brackets and each wooden panel, as well as an isometric drawing of the full model are included as follows:
+(insert images of drawings) 
+
+
+## *Part 5 – The Mobile App*
+To promote seamless user interfacing, a mobile app was created to bring the different components together in one place. This is the master control for our watering system – here, the user can control everything that the system does. This part delves into the details of how the team designed and implemented each individual section. 
+
+### 1. Automatic Grow Light Timer (Custom Bounds) 
+This subsystem automates whether the grow light is on or off depending on user-chosen bounds. A timer was created with the ability to customize the start and end of each “on” interval by clicking a drop-down menu. This timer allows the user to customize their watering schedule based on the plant species or how often they’d like to water it. The code implemented to create this automatic grow light is included as follows:
+
+### 2. Reservoir Water Level Alerts
+To ensure the system does not run out of water, an alert feature was created to notify the user when the water level reaches below a certain threshold. The ultrasonic sensor takes the readings and communicates them to MIT app inventor via a Flask server, which is described further in the integration with Arduinos subsystem. When triggered, it will send an alert to the user, instructing them to refill the reservoir. The code used to create the reservoir water level alert system is shown as follows:
+
+### 3. Plant Health Tracking 
+Another deliverable the team aimed to satisfy is the plant health tracking. This subsystem keeps a running count of how often the grow light has been turned on and the plant has been watered. It then uses this raw data and displays it on a separate screen that the user can refer to at any time. The code used to produce this is included as follows:
+
+### 4. Nutrient Intake Guide  
+When dealing with different types of plants, it’s oftentimes hard to keep track of what each individual plant may need. The nutrient intake guide is a basic outline for lighting and watering practices for a couple of common plants for the user to refer to at any time. For future design, this can be expanded upon to allow for customizable inputs (i.e., Different kinds of houseplants instead of just an umbrella term for houseplants, more fruits, and vegetables, etc.). The code used to implement this is as follows:
+
+### 5. Integration with Arduinos 
+Arduino IDE cannot directly communicate with MIT app inventor, which requires a creative design solution to get around this hurdle. There are two computers running two different .ino files, but each computer will run a small python Flask server that listens to MIT app inventor web requests and acts accordingly. This allows the MIT app inventor to effectively communicate with both computers, allowing seamless user experience. The code and steps required to set up these Flask servers are included as follows: 
 
 ## Testing Description
 
 We thoroughly tested each component individually and then as a complete system. The testing setup included:
-•	Soil Sensor Calibration:
+
+*	Soil Sensor Calibration:
 Using a Digital Multimeter to measure voltage outputs across the sensor to test connection. 
-•	RTC set up and testing:
+*	RTC set up and testing:
 Verified and adjusted time using the RTC library from Arduino IDE. 
-•	Ultrasonic Sensor testing:
+*	Ultrasonic Sensor testing:
 Confirmed distance measurement accuracy for reservoir monitoring.
-•	Pump Activation test:
+*	Pump Activation test:
 Confirmed relay control and correct moisture threshold activation. 
-•	Grow Light Testing:
+*	Grow Light Testing:
 Verified that the relay correctly switched the light on and off according to the RTC settings. 
-•	RTC Adjustments:
+*	RTC Adjustments:
 Fine-tuned timing to align lighting schedule and moisture readings 
 
 Equipment used:
-•	Digital Multimeter (voltage output reading)
-•	Arduino IDE Serial Monitor for sensor output confirmation
+
+*	Digital Multimeter (voltage output reading)
+*	Arduino IDE Serial Monitor for sensor output confirmation
 
 ## Design Decision Discussion
 
@@ -378,6 +401,7 @@ The limitations of this system are as follows. The current version requires manu
 # Testing Results
 
 All of the following components were tested both individually and with the integrated system to ensure full operational capability.
+
 ### 1. Soil moisture sensing and pump activation
 The SparkFun Soil Moisture Sensor accurately detected soil dryness and triggered the water pump through a relay when readings fell below the calibrated moisture threshold. The system consistently avoided overwatering, and pump activation was confirmed with both water flow and buzzer alerts during each test cycle. To test the pump system, we used the following code to turn the system on and off to test its performance:
 ```c++
