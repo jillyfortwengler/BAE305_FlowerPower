@@ -73,122 +73,96 @@ To connect the soil moisture readings to the LCD, the signal must be converted f
 This code includes the soil moisture sensor, ultrasonic sensor, and the indicator LED. Within this code, it is important to define pin definitions and only use one void loop function. This code is outlined below. 
 
 ```c++ 
+#include <Wire.h>
 
-//code controls soil sensor, pump to activate based on soil, buzzer beeps when watering is complete, and LED turns on to signal refill reminder.  
+// === Pin Definitions ===
+const int soilSensorPin = A0;
+const int pwmOutPin     = 3;    // PWM to green Arduino
+const int trigPin       = 7;    // Ultrasonic TRIG
+const int echoPin       = 10;    // Ultrasonic ECHO
+const int ledPin        = 8;    // LED for low reservoir
+const int buzzerPin     = 9;    // Buzzer
 
-// === Libraries ===
-
-#include <Wire.h> 
 
 
-// === Pin Definitions === 
+// === Thresholds ===
 
-const int soilSensorPin = A0; 
-const int pwmOutPin     = 3;    // PWM to green Arduino 
-const int pumpPin       = 12;   // Relay for pump 
-const int trigPin       = 7;    // Ultrasonic TRIG 
-const int echoPin       = 6;    // Ultrasonic ECHO 
-const int ledPin        = 8;    // LED for low reservoir 
-const int buzzerPin     = 9;    // Buzzer 
+const int depthToWater = 5;         // in cm (reservoir low alert)
+const unsigned long checkInterval = 2000; // Delay between checks (ms
 
-// === Thresholds === 
+// === State Tracking ===
+unsigned long lastCheckTime = 0;
 
-const int dryThreshold = 480;          // Adjust for calibration 
-const int depthToWater = 2.75;         // in cm (reservoir low alert) 
-const unsigned long wateringTime = 2000;  // Pump ON time (ms) 
-const unsigned long checkInterval = 2000; // Delay between checks (ms 
+void setup() {
+  Serial.begin(9600);
 
-// === State Tracking === 
+  pinMode(pwmOutPin, OUTPUT);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(ledPin, OUTPUT);
+  pinMode(buzzerPin, OUTPUT);
 
-unsigned long lastCheckTime = 0; 
+  
+  digitalWrite(ledPin, LOW);   // LED off
+}
 
-void setup() { 
+void loop() {
+  unsigned long currentTime = millis();
 
-  Serial.begin(9600); 
 
-  pinMode(pwmOutPin, OUTPUT); 
-  pinMode(pumpPin, OUTPUT); 
-  pinMode(trigPin, OUTPUT); 
-  pinMode(echoPin, INPUT); 
-  pinMode(ledPin, OUTPUT); 
-  pinMode(buzzerPin, OUTPUT); 
+  // Only check at interval
+  if (currentTime - lastCheckTime >= checkInterval) {
+    lastCheckTime = currentTime;
 
-  digitalWrite(pumpPin, LOW);  // Ensure pump is off 
-  digitalWrite(ledPin, LOW);   // LED off 
+    // --- Read Soil Moisture ---
+    int soilRaw = analogRead(soilSensorPin);
+    int pwmValue = map(soilRaw, 0, 1023, 0, 255);
 
-} 
+    analogWrite(pwmOutPin, pwmValue);
 
-void loop() { 
+    Serial.print("Soil Raw: ");
+    Serial.print(soilRaw);
+    Serial.print(" → PWM: ");
+    Serial.println(pwmValue);
 
-  unsigned long currentTime = millis(); 
+    // --- Read Water Level (Ultrasonic) ---
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(2);
+    digitalWrite(trigPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(100);
+    long duration = pulseIn(echoPin, HIGH);
+    float waterHeight = duration * 0.034 / 2.0; //converting the measurement to the distance to the water ,
 
-  // Only check at interval 
+    Serial.print("Water Height (cm): ");
+    Serial.println(waterHeight);
 
-  if (currentTime - lastCheckTime >= checkInterval) { 
-    lastCheckTime = currentTime; 
 
-    // --- Read Soil Moisture --- 
-
-    int soilRaw = analogRead(soilSensorPin); 
-    int pwmValue = map(soilRaw, 0, 532, 0, 255); 
-
-    analogWrite(pwmOutPin, pwmValue); 
-
-    Serial.print("Soil Raw: "); 
-    Serial.print(soilRaw); 
-    Serial.print(" → PWM: "); 
-    Serial.println(pwmValue); 
-
-    // --- Read Water Level (Ultrasonic) --- 
-
-    digitalWrite(trigPin, LOW); 
-    delayMicroseconds(2); 
-    digitalWrite(trigPin, HIGH); 
-    delayMicroseconds(10); 
-    digitalWrite(trigPin, LOW); 
-    long duration = pulseIn(echoPin, HIGH); 
-
-    float waterHeight = duration * 0.034 / 2.0; //converting the measurement to the distance to the water , 
-
-    Serial.print("Water Height (cm): "); 
-    Serial.println(waterHeight); 
-
-    // --- LED if reservoir low --- 
-
-    if (waterHeight < depthToWater) { //when the water height measured is less than the depth to water threshold 
-     digitalWrite(ledPin, HIGH); // turn LED on when the water resevoir needs to be filled  
-      Serial.println("Reservoir Low"); 
-
-    } else { 
-
-      digitalWrite(ledPin, LOW); 
-      Serial.println("Reservoir OK"); 
+    // --- LED if reservoir low ---
+    if (waterHeight > depthToWater) { //when the water height measured is less than the depth to water threshold
+      digitalWrite(ledPin, HIGH); // turn LED on when the water resevoir needs to be filled 
+      Serial.println("Reservoir Low");
+    } else {
+      digitalWrite(ledPin, LOW);
+      Serial.println("Reservoir OK");
     }
 
-    // --- Trigger buzzer and pump if dry AND water available --- 
+    // --- Trigger buzzer and pump if dry AND water available ---
+    if (soilRaw <= dryThreshold && waterHeight >= depthToWater) {
 
-    if (soilRaw <= dryThreshold && waterHeight >= depthToWater) { 
+      tone(buzzerPin, 1000, 500);  // Buzz!
+      delay(500);
+      noTone(buzzerPin); // buzz off
 
-      Serial.println("Now watering"); 
-      tone(buzzerPin, 1000, 500);  // Buzz! 
-      delay(500); 
-      noTone(buzzerPin); // buzz off 
+    
 
-      digitalWrite(pumpPin, HIGH); 
-      delay(wateringTime); 
-      digitalWrite(pumpPin, LOW); 
-      Serial.println("Pump OFF"); 
+    Serial.println("------------------------------");
+  }
 
-    } else { 
-      Serial.println("No watering needed or water unavailable."); 
-
-    } 
-    Serial.println("------------------------------"); 
-
-  } 
-  // Loop runs constantly, but action only happens every minute 
-
-} 
+  // Loop runs constantly, but action only happens every minute
+}
+}
 
 ```
 
