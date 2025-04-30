@@ -3,20 +3,22 @@ theme: jekyll-theme-leap-day
 
 Group Members: Brynn Cooper, Jillian Fortwengler, Lauren Kargas
 
-## Summary
+# Summary
 
 The Flower Power Plant Staycation was thoughtfully designed with busy college students in mind, especially those who love their plants but may not always have the time to properly care for them. This innovative system features a fully automated watering and lighting setup that users can customize based on their plant’s specific needs. A SparkFun Soil Moisture Sensor continuously monitors soil moisture, triggering watering via pump only when necessary to conserve water and prevent overwatering. An ultrasonic sensor monitors the water reservoir level and activates an LED indicator when a refill is needed. By automating essential plant care tasks, the Flower Power Plant Staycation helps students maintain healthy, thriving plants with minimal daily effort.
 
 
-## Design Description
+# Design Description
 
-### Materials and Planning
-We began by outlining the materials needed for the project. Key components were carefully selected based on their performance and compatibility:
-- UV Grow Light to promote optimal plant growth
-- SparkFun Inventor's Kit
-- SparkFun Soil Sensor
-- Water pump motor capable of extended use
-- Circuit components: RTC (Real-Time Clock) module and two relays
+## Materials and Planning
+
+1. First, we created a Bill of Materials (BoM) needed for this project. We selected the best components based on their performance and capability for the needs of the project. 
+•	A UV Grow Light to promote optimal plant growth
+•	SparkFun Soil Sensor
+•	A LED bulb extension cord with a switch
+•	A reliable water pump motor capable of extended use
+•	A tube for the water pump
+•	Circuit components: Real-Time Clock (RTC), two relays, LCD screen, 
 
 ![image](https://github.com/user-attachments/assets/41541d39-87c2-4b2c-950a-eb7c08c0e04e)
 
@@ -27,41 +29,30 @@ We began by outlining the materials needed for the project. Key components were 
 
 **Motor and Soil Sensor Control:**
 
-The motor is connected to a relay, which switches it on and off based on soil moisture readings. A SparkFun Soil Moisture Sensor detects when watering is needed. A piezo buzzer sounds during watering to alert the user.
+The motor is connected to a relay, which switches the pump on and off based on the soil moisture reading. To create the automated light system, attach a light bulb to a relay in order to control when it turned on and off. Furthermore, to make this light system based on real time, incorporate a Real-Time Module (RTC). This circuit is shown in Figure 2.
 
-![image](https://github.com/user-attachments/assets/1b75d73b-1a72-480d-930b-cf0495b2d304)
+![image](https://github.com/user-attachments/assets/9b303479-a21b-4afa-8086-95b45c993d53)
 
-**_Figure 2: Motor and Soil Sensor Circuit Design_**
+**_Figure 2: Motor and Light Circuit Design_**
 
 
 **Reservoir Monitoring:**
 
-An ultrasonic sensor detects the water level in the reservoir. If the water level drops too low, an LED light illuminates to signal a refill is needed.
+Next, use an ultrasonic sensor to detect when the reservoir is low. If the water level is low, it lights up an LED. Furthermore, a SparkFun Soil Moisture Sensor detects when watering is needed. The piezo buzzer sounds during watering to alert the user. 
 
-![image](https://github.com/user-attachments/assets/13b4dcab-2bd2-4770-8004-b3d2e1141c25)
+![image](https://github.com/user-attachments/assets/5221b55c-8280-4b81-a0e2-daa3091239f9)
 
 **_Figure 3: Ultrasonic Sensor Circuit Design_**
 
 **LCD Display Integration:**
 
-An LCD screen displays the real-time clock and soil moisture percentage.
+Add an LCD screen displays the real-time clock and soil moisture percentage.
 
 ![image](https://github.com/user-attachments/assets/41dd840b-e424-466f-9f6b-9a21830703e1)
 
 **_Figure 4: LCD Screen Circuit Design_**
 
-
-### Part 2: Automated Lighting System
-**Real-Time Clock:**
-
-The light bulb is connected to a relay module to control when the light is on and off. This relay controls the light on a schedule based on real time using the Real-Time Clock Module. 
-
-![image](https://github.com/user-attachments/assets/67652321-0dcf-4e61-8ada-a5317d8eecd0)
-
-**_Figure 5: Light Bulb and RTC Circuit Design_**
-
-
-**Soil Moisture Signal**
+**LCD Display Integration**
 To connect the soil moisture readings to the LCD, the signal must be converted from analog to digital across the Arduinos. This is done by filtering the signal through a capacitor and resistor to clean the PWM signal. 
 
 ![image](https://github.com/user-attachments/assets/4e8bf86e-3239-4440-9d50-e741bc168066)
