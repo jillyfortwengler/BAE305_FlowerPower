@@ -327,33 +327,57 @@ void loop() {
 
 ``` 
 
-## *Part 4 – The Housing*
-
+# *Part 4 – The Housing*
 As this project is comprised of many different working parts, a wooden box was constructed to house the components separately and safely. It consisted of three main compartments: one large middle compartment and two smaller ones on the top and bottom. The upper compartment is intended to house the grow light and associated Arduinos, whereas the lower compartment contains the reservoir, refill light, and pump, and all other associated Arduinos. The larger middle compartment is intended to house the plants safely while preventing any soil from getting into the other components. 
 
 This design also promotes the implementation of the product in its target audience: busy college students. With one simple housing that contains all components, consumers needn’t worry about having difficulty moving things around – just empty the reservoir and it’s ready to move!
 
-To ensure replicative design via future engineers, SOLIDWORKS 2024 was used to model the housing and create clear and concise engineering drawings before physically building the model. The panels were modeled individually, then laser cut before being superglued together. Support brackets were also created and fastened to the bottom corners of the housing to ensure stability while bearing weight. One drawing for the brackets and each wooden panel, as well as an isometric drawing of the full model are included as follows:
-(insert images of drawings) 
+To ensure replicative design via future engineers, SOLIDWORKS 2024 was used to model the housing before physically building the model. The panels were modeled individually, then laser cut before being superglued together. Support brackets were also created and fastened to the bottom corners of the housing to ensure stability while bearing weight. The concept design is as follows. The dimensions of the individual parts can be tweaked based on what kind of plant the user intends to house in the middle compartment. 
+ 
+![Picture1](https://github.com/user-attachments/assets/8afe96f3-5ba7-4156-82a9-ce1441edb317)
 
+_Figure 6: Housing Concept Design_
 
-## *Part 5 – The Mobile App*
+# *Part 5 – The Mobile App*
 To promote seamless user interfacing, a mobile app was created to bring the different components together in one place. This is the master control for our watering system – here, the user can control everything that the system does. This part delves into the details of how the team designed and implemented each individual section. 
 
-### 1. Automatic Grow Light Timer (Custom Bounds) 
-This subsystem automates whether the grow light is on or off depending on user-chosen bounds. A timer was created with the ability to customize the start and end of each “on” interval by clicking a drop-down menu. This timer allows the user to customize their watering schedule based on the plant species or how often they’d like to water it. The code implemented to create this automatic grow light is included as follows:
+## 1. Manual Grow Light Control
+This subsystem allows the user to control whether the light is on or off, toggleable by a “Toggle Manual Control” button.  This allows the user to customize their watering schedule based on the plant species or how often they’d like to water it. The system is automated, but the app allows for better user interactivity by introducing a manual element. The code implemented to create this automatic grow light is included as follows:
 
-### 2. Reservoir Water Level Alerts
-To ensure the system does not run out of water, an alert feature was created to notify the user when the water level reaches below a certain threshold. The ultrasonic sensor takes the readings and communicates them to MIT app inventor via a Flask server, which is described further in the integration with Arduinos subsystem. When triggered, it will send an alert to the user, instructing them to refill the reservoir. The code used to create the reservoir water level alert system is shown as follows:
+ ![Picture2](https://github.com/user-attachments/assets/91ac0010-caf5-4400-88f3-d6ba1db19452)
 
-### 3. Plant Health Tracking 
-Another deliverable the team aimed to satisfy is the plant health tracking. This subsystem keeps a running count of how often the grow light has been turned on and the plant has been watered. It then uses this raw data and displays it on a separate screen that the user can refer to at any time. The code used to produce this is included as follows:
+_Figure 7: Initializing Serial Communication_
 
-### 4. Nutrient Intake Guide  
+![Picture3](https://github.com/user-attachments/assets/9efee834-cbee-4f74-94bc-4dc22e2f2fe3)
+
+ _Figure 8: Adding Manual Controls_
+
+## 2. Analytics Tracking 
+Another deliverable the team aimed to satisfy is logging the data properly. This section of the app opens an “Analytics” screen, which displays a running count of how many times the light has been turned on and off, as well as how many times the pump has been turned on. The code to open and operate the screen is included as follows: 
+
+ ![Picture4](https://github.com/user-attachments/assets/b69e2761-3315-478e-b4c5-5595b0fbb9f6)
+
+_Figure 9: Initializing the Analytics Screen_
+
+ ![Picture5](https://github.com/user-attachments/assets/1626a739-4ed9-44e6-9daf-02d73fc3d146)
+
+_Figure 10: Operating the Analytics Screen_
+
+## 3. Nutrient Intake Guide  
 When dealing with different types of plants, it’s oftentimes hard to keep track of what each individual plant may need. The nutrient intake guide is a basic outline for lighting and watering practices for a couple of common plants for the user to refer to at any time. For future design, this can be expanded upon to allow for customizable inputs (i.e., Different kinds of houseplants instead of just an umbrella term for houseplants, more fruits, and vegetables, etc.). The code used to implement this is as follows:
 
-### 5. Integration with Arduinos 
-Arduino IDE cannot directly communicate with MIT app inventor, which requires a creative design solution to get around this hurdle. There are two computers running two different .ino files, but each computer will run a small python Flask server that listens to MIT app inventor web requests and acts accordingly. This allows the MIT app inventor to effectively communicate with both computers, allowing seamless user experience. The code and steps required to set up these Flask servers are included as follows: 
+ ![Picture6](https://github.com/user-attachments/assets/ec71734b-4daf-4359-afa2-13eeb954b1a3)
+
+_Figure 11: Initializing the Watering Practices Screen_
+
+ ![Picture7](https://github.com/user-attachments/assets/98f94c48-b0a1-42b2-ab68-5ab9f1cbf964)
+
+_Figure 12: Screen Components_
+
+ ![Picture8](https://github.com/user-attachments/assets/250f24b6-0fce-4322-a6cb-92d2105cba8a)
+
+_Figure 13: Closing the Watering Practices Screen_
+
 
 ## Testing Description
 
